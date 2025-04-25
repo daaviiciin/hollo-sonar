@@ -1,0 +1,27 @@
+pipeline {
+    agent any
+
+    environment {
+        SONARQUBE = 'SonarQube Local'  // nombre de tu servidor configurado en Jenkins
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                git url: 'https://github.com/daaviiciin/cicd.git', branch: 'main'
+            }
+        }
+
+        stage('SonarQube Analysis') {
+            steps {
+                withSonarQubeEnv("${env.SONARQUBE}") {
+                    sh 'sonar-scanner \
+                        -Dsonar.projectKey=cicd \
+                        -Dsonar.sources=. \
+                        -Dsonar.host.url=http://sonarqube:9000 \
+                        -Dsonar.login=TOKEN_AQUI'
+                }
+            }
+        }
+    }
+}
